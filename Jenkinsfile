@@ -58,7 +58,7 @@ pipeline {
                     }
                     post {
                         always {
-                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'playwright HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'playwright Local HTML Report', reportTitles: '', useWrapperFileDirectly: true])
                         }
                     }
                 }
@@ -78,6 +78,27 @@ pipeline {
                 node_modules/.bin/netlify status
                 node_modules/.bin/netlify deploy --dir=build --prod
                 '''
+            }
+        }
+        stage('Prod e2e') {
+            agent {
+                docker {
+                    image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                    reuseNode true
+                }
+            }
+            environment {
+                CI_ENVIRONMENT_URL = 'https://dulcet-cheesecake-60d93a.netlify.app'
+            }
+            steps {
+                sh '''
+                npx playwright test --reporter=html
+                '''
+            }
+            post {
+                always {
+                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'playwright prod HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+                }
             }
         }
        
