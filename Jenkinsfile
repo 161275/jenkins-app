@@ -5,6 +5,7 @@ pipeline {
         NETLIFY_SITE_ID = '6e92f3a3-0f41-4fd1-b86f-4a04c91b8aba'
         NETLIFY_AUTH_TOKEN = credentials('netlify-token')
         REACT_APP_VERSION = "1.0.$BUILD_ID"
+        AWS_S3_BUCKET = 'jenkins-app-nish'
     }
 
     stages {
@@ -13,6 +14,7 @@ pipeline {
                 docker {
                     image 'amazon/aws-cli'
                     args "--entrypoint=''"
+                    reuseNode true
                 }
             }
             steps{
@@ -20,6 +22,7 @@ pipeline {
                     sh '''
                     aws --version
                     aws s3 ls
+                    aws s3 sync build s3://$AWS_S3_BUCKET/
                     '''
                 }
                 
