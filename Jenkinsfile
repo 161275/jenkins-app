@@ -73,11 +73,19 @@ pipeline {
             }
             steps {
                 sh '''
-                npm install netlify-cli@20.1.1
+                npm install netlify-cli@20.1.1 node-jq
                 node_modules/.bin/netlify --version
                 node_modules/.bin/netlify status
-                node_modules/.bin/netlify deploy --dir=build
+                node_modules/.bin/netlify deploy --dir=build --json > stage_data.json
+                node_modules/.bin/node-jq -r 'deploy_url' tage_data.json
                 '''
+            }
+        }
+        stage('Approval') {
+            steps {
+                timeout(time: 15, unit: 'HOURS') {
+                input message: 'Do you wish to deploy to production?', ok: 'Yes, I am sure!'
+            }
             }
         }
         stage('deploy prod') {
@@ -96,13 +104,7 @@ pipeline {
                 '''
             }
         }
-        stage('Approval') {
-            steps {
-                timeout(time: 15, unit: 'HOURS') {
-                input message: 'Do you wish to deploy to production?', ok: 'Yes, I am sure!'
-            }
-            }
-        }
+        
         stage('Prod e2e') {
             agent {
                 docker {
