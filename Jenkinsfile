@@ -64,26 +64,26 @@ pipeline {
                 }
             }
         }
-        stage('deploy staging') {
-            agent {
-                docker {
-                    image 'node:18-alpine'
-                    reuseNode true
-                }
-            }
-            steps {
-                sh '''
-                npm install netlify-cli@20.1.1 node-jq
-                node_modules/.bin/netlify --version
-                node_modules/.bin/netlify status
-                node_modules/.bin/netlify deploy --dir=build --json > stage_data.json
-                '''
-                script {
-                    env.STAGE_URL = sh(script: 'node_modules/.bin/node-jq -r ".deploy_url" stage_data.json', returnStdout: true)
-                }
-            }
-        }
-        stage('Stage e2e') {
+        // stage('deploy staging') {
+        //     agent {
+        //         docker {
+        //             image 'node:18-alpine'
+        //             reuseNode true
+        //         }
+        //     }
+        //     steps {
+        //         sh '''
+        //         npm install netlify-cli@20.1.1 node-jq
+        //         node_modules/.bin/netlify --version
+        //         node_modules/.bin/netlify status
+        //         node_modules/.bin/netlify deploy --dir=build --json > stage_data.json
+        //         '''
+        //         script {
+        //             env.STAGE_URL = sh(script: 'node_modules/.bin/node-jq -r ".deploy_url" stage_data.json', returnStdout: true)
+        //         }
+        //     }
+        // }
+        stage('Stage') {
             agent {
                 docker {
                     image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
@@ -92,11 +92,15 @@ pipeline {
             }
             environment {
                 //CI_ENVIRONMENT_URL = 'https://dulcet-cheesecake-60d93a.netlify.app'
-                CI_ENVIRONMENT_URL = "${env.STAGE_URL}"
+                CI_ENVIRONMENT_URL = ""
             }
             steps {
                 sh '''
-
+                npm install netlify-cli@20.1.1 node-jq
+                node_modules/.bin/netlify --version
+                node_modules/.bin/netlify status
+                node_modules/.bin/netlify deploy --dir=build --json > stage_data.json
+                CI_ENVIRONMENT_URL = $(node_modules/.bin/node-jq -r ".deploy_url" stage_data.json)
                 npx playwright test --reporter=html
                 '''
             }
@@ -113,24 +117,24 @@ pipeline {
         //     }
         //     }
         // }
-        stage('deploy prod') {
-            agent {
-                docker {
-                    image 'node:18-alpine'
-                    reuseNode true
-                }
-            }
-            steps {
-                sh '''
-                #npm install netlify-cli@20.1.1
-                node_modules/.bin/netlify --version
-                node_modules/.bin/netlify status
-                node_modules/.bin/netlify deploy --dir=build --prod
-                '''
-            }
-        }
+        // stage('deploy prod') {
+        //     agent {
+        //         docker {
+        //             image 'node:18-alpine'
+        //             reuseNode true
+        //         }
+        //     }
+        //     steps {
+        //         sh '''
+        //         #npm install netlify-cli@20.1.1
+        //         node_modules/.bin/netlify --version
+        //         node_modules/.bin/netlify status
+        //         node_modules/.bin/netlify deploy --dir=build --prod
+        //         '''
+        //     }
+        // }
         
-        stage('Prod e2e') {
+        stage('Prod') {
             agent {
                 docker {
                     image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
@@ -142,6 +146,10 @@ pipeline {
             }
             steps {
                 sh '''
+                #npm install netlify-cli@20.1.1
+                node_modules/.bin/netlify --version
+                node_modules/.bin/netlify status
+                node_modules/.bin/netlify deploy --dir=build --prod
                 npx playwright test --reporter=html
                 '''
             }
