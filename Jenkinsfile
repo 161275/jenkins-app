@@ -92,7 +92,7 @@ pipeline {
             }
             environment {
                 //CI_ENVIRONMENT_URL = 'https://dulcet-cheesecake-60d93a.netlify.app'
-                CI_ENVIRONMENT_URL = ''
+                CI_ENVIRONMENT_URL = 'need-to-be-set'
             }
             steps {
                 sh '''
