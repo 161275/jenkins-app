@@ -77,7 +77,6 @@ pipeline {
                 node_modules/.bin/netlify --version
                 node_modules/.bin/netlify status
                 node_modules/.bin/netlify deploy --dir=build --json > stage_data.json
-                node_modules/.bin/node-jq -r 'deploy_url' stage_data.json
                 '''
                 script {
                     env.STAGE_URL = sh(script: 'node_modules/.bin/node-jq -r ".deploy_url" stage_data.json', returnStdout: true)
