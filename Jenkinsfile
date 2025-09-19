@@ -25,6 +25,7 @@ pipeline {
                     # aws s3 ls
                     # aws s3 sync build s3://$AWS_S3_BUCKET/
                     aws ecs register-task-definition --cli-input-json file://aws/task-def.json --region $AWS_DEFAULT_REGION
+                    aws ecs update-service --cluster jenkins-app-prod --service jenkins-app-taskdef-prod-service --task-definition jenkins-app-taskdef-prod:2
                     '''
                 }
                 
