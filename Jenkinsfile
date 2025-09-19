@@ -4,6 +4,7 @@ pipeline {
     environment {
         NETLIFY_SITE_ID = '6e92f3a3-0f41-4fd1-b86f-4a04c91b8aba'
         NETLIFY_AUTH_TOKEN = credentials('netlify-token')
+        REACT_APP_VERSION = 
     }
 
     stages {
@@ -100,7 +101,7 @@ pipeline {
                 node_modules/.bin/netlify --version
                 node_modules/.bin/netlify status
                 node_modules/.bin/netlify deploy --dir=build --json > stage_data.json
-                CI_ENVIRONMENT_URL = $(node_modules/.bin/node-jq -r ".deploy_url" stage_data.json)
+                CI_ENVIRONMENT_URL=$(node_modules/.bin/node-jq -r ".deploy_url" stage_data.json)
                 npx playwright test --reporter=html
                 '''
             }
