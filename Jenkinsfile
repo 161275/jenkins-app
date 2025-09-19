@@ -11,7 +11,7 @@ pipeline {
         stage('AWS'){
             agent {
                 docker {
-                    image 'awsamazon/aws-cli'
+                    image 'amazon/aws-cli'
                 }
             }
             steps{
