@@ -74,7 +74,7 @@ pipeline {
                         # npm install serve
                         # node_modules/.bin/serve -s build &
                         serve -s build &
-                        sleep 3
+                        sleep 10
                         npx playwright test --reporter=html
                         '''
                     }
@@ -125,6 +125,7 @@ pipeline {
                 netlify --version
                 netlify status
                 netlify deploy --dir=build --json > stage_data.json
+                sleep 5
                 CI_ENVIRONMENT_URL=$(jq -r ".deploy_url" stage_data.json)
                 npx playwright test --reporter=html
                 '''
