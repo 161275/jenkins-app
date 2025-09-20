@@ -41,7 +41,7 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {      
                     sh '''
                     #amazon-linux-extras install docker 
-                    docker build -t $AWS_DR/$APP_NAME:$REACT_APP_VERSION .
+                    docker buildx build --platform linux/amd64,linux/arm64 -t $AWS_DR/$APP_NAME:$REACT_APP_VERSION .
                     aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_DR
                     docker push $AWS_DR/$APP_NAME:$REACT_APP_VERSION
                     '''
