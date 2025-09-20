@@ -11,7 +11,7 @@ pipeline {
         AWS_ECS_CLUSTER = 'jenkins-app-prod '
         AWS_ECS_SERVICE = 'jenkins-app-taskdef-prod-service'
         AWS_ECS_TD = 'jenkins-app-taskdef-prod'
-        APP_NAME= 'my-jenkins-app'
+        APP_NAME= 'jenkinsapp'
     }
 
     stages {
