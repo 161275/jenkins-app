@@ -6,7 +6,7 @@
     "containerDefinitions": [
         {
             "name": "jenkins-app",
-            "image": "nginx:1.26-alpine",
+            "image": "505679505304.dkr.ecr.us-east-1.amazonaws.com/jenkinsapp:image_version",
             "portMappings": [
                 {
                 "appProtocol": "http",

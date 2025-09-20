@@ -63,6 +63,7 @@ pipeline {
                     #yum install jq
                     # aws s3 ls
                     # aws s3 sync build s3://$AWS_S3_BUCKET/
+                    sed -i "s/image_version/$REACT_APP_VERSION/g" aws/task-def.json
                     rev=$(aws ecs register-task-definition --cli-input-json file://aws/task-def.json --region $AWS_DEFAULT_REGION | jq -r '.taskDefinition.revision')
                     aws ecs update-service --cluster $AWS_ECS_CLUSTER --service $AWS_ECS_SERVICE --task-definition $AWS_ECS_TD:$rev
                     aws ecs wait services-stable --cluster $AWS_ECS_CLUSTER --service $AWS_ECS_SERVICE
