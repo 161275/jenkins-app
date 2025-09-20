@@ -7,6 +7,9 @@ pipeline {
         REACT_APP_VERSION = "1.0.$BUILD_ID"
         AWS_S3_BUCKET = 'jenkins-app-nish'
         AWS_DEFAULT_REGION = 'us-east-1'
+        AWS_ECS_CLUSTER = 'jenkins-app-prod '
+        AWS_ECS_SERVICE = 'jenkins-app-taskdef-prod-service'
+        AWS_ECS_TD = 'jenkins-app-taskdef-prod'
     }
 
     stages {
@@ -26,7 +29,8 @@ pipeline {
                     # aws s3 ls
                     # aws s3 sync build s3://$AWS_S3_BUCKET/
                     rev = $(aws ecs register-task-definition --cli-input-json file://aws/task-def.json --region $AWS_DEFAULT_REGION | jq -r '.taskDefinition.revision')
-                    aws ecs update-service --cluster jenkins-app-prod --service jenkins-app-taskdef-prod-service --task-definition jenkins-app-taskdef-prod:$rev
+                    aws ecs update-service --cluster $AWS_ECS_CLUSTER --service $AWS_ECS_SERVICE --task-definition $AWS_ECS_TD:$rev
+                    aws ecs wait services-stable --cluster $AWS_ECS_CLUSTER --service $AWS_ECS_SERVICE
                     '''
                 }
                 
