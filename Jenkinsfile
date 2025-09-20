@@ -10,6 +10,7 @@ pipeline {
         AWS_ECS_CLUSTER = 'jenkins-app-prod '
         AWS_ECS_SERVICE = 'jenkins-app-taskdef-prod-service'
         AWS_ECS_TD = 'jenkins-app-taskdef-prod'
+        APP_NAME= 'my-jenkins-app'
     }
 
     stages {
@@ -38,7 +39,7 @@ pipeline {
             steps {
                 sh '''
                 #amazon-linux-extras install docker 
-                docker build -t my-jenkins-app .
+                docker build -t $APP_NAME:$REACT_APP_VERSION .
                 '''
             }
         }
